@@ -2,6 +2,7 @@
 import {useState, useEffect} from "react";
 import Link from "next/link";
 import LoadingPage from "../loading";
+import AddBook from './AddBook';
 
 async function getBooks() {
     const res = await fetch("http://localhost:3000/api/books");
@@ -37,9 +38,8 @@ const Books = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)} className ="input-bordered w-full max-w-xs"/>
                 <button type ="submit" className="btn btn-primary">Search</button>
-              
             </form>
-
+            <AddBook/>
             {books.map((book) => (
                 <div key={book.id}>
                     <div class="flex flex-wrap justify-center mt-10">
