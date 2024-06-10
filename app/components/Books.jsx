@@ -14,11 +14,16 @@ const Books = () => {
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
+
+const fetchBooks = async () =>{
+    const res = await fetch ("/api/books");
+    const books = await res.json();
+    setBooks(books);
+    setLoading(false);
+}
+
     useEffect(() => {
-        getBooks().then((books) => {
-            setBooks(books);
-            setLoading(false);
-        });
+        fetchBooks();
     },[]);
     if (loading){return <LoadingPage/>}
     const handleSubmit = async(e)=> {
@@ -30,6 +35,14 @@ const Books = () => {
         setBooks(books);
         setLoading(false);
     }
+    const deleteBook = async(id) => {
+        const res = await fetch(`api/books/${id}`,
+            {
+                method:'DELETE'
+            });
+            fetchBooks();
+    }
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
@@ -39,7 +52,7 @@ const Books = () => {
                 onChange={(e) => setQuery(e.target.value)} className ="input-bordered w-full max-w-xs"/>
                 <button type ="submit" className="btn btn-primary">Search</button>
             </form>
-            <AddBook/>
+            <AddBook refreshBooks={fetchBooks}/>
             {books.map((book) => (
                 <div key={book.id}>
                     <div class="flex flex-wrap justify-center mt-10">
@@ -50,13 +63,13 @@ const Books = () => {
                         </figure>
                         <div className="card-body">
                             <h2 className="card-title">
-                                {book.id}
-                            </h2>
                             <p>{book.title}</p>
+                            </h2>
                             <div className="card-actions justify-end">
                                 <Link href={book.link} className="btn btn-primary">See in Amazon
                                 </Link>
-                                <button className="btn btn-error">Delete</button>
+                                <button onClick={() => deleteBook(book.id)} 
+                                className="btn btn-error">Delete</button>
                             </div>
                         </div>
 
